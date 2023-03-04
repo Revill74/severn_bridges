@@ -5,9 +5,9 @@ from bs4 import BeautifulSoup
 
 WEB_PATH = "https://nationalhighways.co.uk/travel-updates/the-severn-bridges/"
 
-def bridge_status(path: str) -> list:
+def bridge_status(path: str) -> tuple:
     """Parses the web path provided and returns the status of each bridge
-     as a list of strings"""
+     as a tuple of strings"""
     try:
         # Get web page
         source = requests.get(path).text
@@ -18,9 +18,11 @@ def bridge_status(path: str) -> list:
         # Find all instances of bridge status divs
             bridge_status = soup.find_all("div", {"class": "severn-crossing-status__heading"})
         # Assign bridge status to variables
-            return [i.text for i in bridge_status]
+            m4 = bridge_status[0].text
+            m48 = bridge_status[1].text
+            return (m4, m48)
     except:
         print('sorry, could not find the status')
 
-status = bridge_status(WEB_PATH)
-print(f'\n{status[0]}\n{status[1]}')
+m4, m48 = bridge_status(WEB_PATH)
+print(f'\n{m4}\n{m48}')
