@@ -2,18 +2,39 @@
 
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 
-WEB_PATH = "https://nationalhighways.co.uk/travel-updates/the-severn-bridges/"
 
-#Get web page
-source = requests.get(WEB_PATH).text
+class BridgeStatus:
+    """Class for keeping bridge status data together"""
+    def __init__(self):
+        self.m4 = self.bridge_status()[0]
+        self.m48 = self.bridge_status()[1]
+        self.timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-#Parse web page through bs4
-soup = BeautifulSoup(source, features="html.parser")
+    def bridge_status(self) -> tuple:
+        """Parses the web path provided and returns the status of each bridge
+        as a tuple of strings"""
 
-#Find all instances of bridge status divs
-bridge_status = soup.find_all("div", {"class": "severn-crossing-status__heading"})
+        WEB_PATH = "https://nationalhighways.co.uk/travel-updates/the-severn-bridges/"
+        try:
+            # Get web page
+            source = requests.get(WEB_PATH).text
 
-#Assign bridge status to variables
-m4 = bridge_status[0].text
-m48 = bridge_status[1].text
+            if source:
+                soup = BeautifulSoup(source, features="html.parser")
+                bridge_status = soup.find_all("div", {"class": "severn-crossing-status__heading"})
+
+                m4 = bridge_status[0].text
+                m48 = bridge_status[1].text
+
+                return (m4, m48)
+        except:
+            print('sorry, could not find the status')
+
+bridges = BridgeStatus()
+bridges_dict = vars(bridges)    # Creates dict of bridges attributes
+
+
+
+
